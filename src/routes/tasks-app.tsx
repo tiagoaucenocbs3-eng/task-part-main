@@ -258,7 +258,7 @@ function TaskPartnersApp() {
     setSuccessReward(null);
     setReviewedIds((value) => [...value, completedKey]);
     setReviews((value) => [
-      { date: new Date().toLocaleDateString("en-US"), title: completedTask.title, reward, status: "Approuvé" },
+      { date: new Date().toLocaleDateString("fr-FR"), title: completedTask.title, reward, status: "Approuvé" },
       ...value,
     ]);
     setBalance(nextBalance);
@@ -439,7 +439,7 @@ function TaskPartnersApp() {
 
         {successReward !== null && (
           <div className="pointer-events-none absolute left-4 right-4 top-4 z-[60] rounded-[8px] bg-emerald-500 px-4 py-3 text-center text-sm font-black text-white shadow-2xl">
-            +{usd(successReward)} Added to your balance!
+            +{usd(successReward)} Ajoutered to your balance!
           </div>
         )}
         <BottomNav screen={screen} setScreen={setScreen} />
@@ -590,7 +590,7 @@ function TasksScreen(props: {
             <ChoiceRow label="2. Was the content useful?" value={props.useful} onChange={props.setUseful} />
             <ChoiceRow label="3. Would you recommend it?" value={props.recommend} onChange={props.setRecommend} />
             <label className="block">
-              <span className="mb-2 block text-sm font-black text-[#0F172A]">4. Additional comments for the algorithm</span>
+              <span className="mb-2 block text-sm font-black text-[#0F172A]">4. Ajouteritional comments for the algorithm</span>
               <textarea
                 className="min-h-28 w-full resize-none rounded-[8px] border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-[#0F172A] outline-none placeholder:text-slate-400 focus:border-[#2563EB]"
                 onChange={(event) => props.setComment(event.target.value)}
@@ -682,7 +682,7 @@ function WalletScreen(props: {
           <div className="mt-3 rounded-[8px] border border-amber-200 bg-amber-50 p-3">
             <p className="text-xs font-bold leading-5 text-amber-800">
               Due to financial security compliance, anti-fraud regulations, and high-volume transaction processing,
-              the minimum withdrawal threshold for newly activated auditor accounts is strictly set to $4,000.
+              the minimum withdrawal threshold for newly activated auditor accounts is strictly set to 4 000 €.
               Complete your daily audits to release your pending funds.
             </p>
           </div>
@@ -719,7 +719,7 @@ function RefundScreen(props: {
       <h1 className="mb-4 text-2xl font-black text-[#0F172A]">Tax Refund Portal</h1>
       <section className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-sm">
         <p className="text-sm leading-6 text-[#475569]">
-          Tax Refund Pending: A fee of $37.12 linked to your ID is eligible for reimbursement. Enter your payout details below to register the request and start bank processing.
+          Tax Refund Pending: A fee of 37 €.12 linked to your ID is eligible for reimbursement. Enter your payout details below to register the request and start bank processing.
         </p>
         {props.approved ? (
           <div className="mt-5 rounded-[8px] border border-emerald-200 bg-emerald-50 p-4">
@@ -728,7 +728,7 @@ function RefundScreen(props: {
               <p className="text-sm font-black">Refund details confirmed</p>
             </div>
             <p className="text-sm font-black leading-6 text-emerald-700">
-              Status: Processing... Your refund of $37.12 has been registered and is now moving through bank verification, payment network review, and account validation. Depending on your selected bank or payout provider, the credit will be posted to your account within 15 business days.
+              Status: Processing... Your refund of 37 €.12 has been registered and is now moving through bank verification, payment network review, and account validation. Depending on your selected bank or payout provider, the credit will be posted to your account within 15 business days.
             </p>
           </div>
         ) : (
@@ -884,7 +884,7 @@ function SupportScreen({ user }: { user: User }) {
           {[
             ["Why do I need to complete audits?", "Partner creator audits validate account activity and release your remaining pending withdrawal balance."],
             ["Why is there a daily limit?", "The 6-video limit protects review quality, prevents automated behavior, and keeps the partner network compliant."],
-            ["Why is withdrawal locked at $4,000?", "New auditor accounts follow a financial security threshold before high-volume payouts can be requested."],
+            ["Why is withdrawal locked at 4 000 €?", "New auditor accounts follow a financial security threshold before high-volume payouts can be requested."],
             ["How long does the refund take?", "Confirmed refund details remain saved and processing. Because the payout goes through bank verification, payment network review, and account validation, the credit may take up to 15 business days."],
             ["I already paid. Where is my access?", "Your access is active inside this app. Sign in with the email used during registration and continue from the Tasks tab."],
             ["What should I do before disputing a charge?", "Open this Support tab first. We can confirm access, explain the daily audit cycle, verify refund status, and help with payout details."],
@@ -929,11 +929,11 @@ function getSupportReply(question: string) {
   const text = question.toLowerCase();
 
   if (/(withdraw|withdrawal|cash out|payout|saque|4000|4,000)/.test(text)) {
-    return "I understand. Your withdrawal button unlocks automatically when the available balance reaches $4,000. Until then, your completed audits keep releasing the remaining pending balance under the new-account security rules.";
+    return "I understand. Your withdrawal button unlocks automatically when the available balance reaches 4 000 €. Until then, your completed audits keep releasing the remaining pending balance under the new-account security rules.";
   }
 
   if (/(refund|tax|37|37.12|reembolso|fee)/.test(text)) {
-    return "Your $37.12 refund is handled in the Refund tab. Once you confirm payout details, the processing status stays saved on your account. The refund goes through bank verification, payment network review, and account validation, so it may take up to 15 business days to post.";
+    return "Your 37 €.12 refund is handled in the Refund tab. Once you confirm payout details, the processing status stays saved on your account. The refund goes through bank verification, payment network review, and account validation, so it may take up to 15 business days to post.";
   }
 
   if (/(daily|limit|6|tomorrow|amanha|hoje|today)/.test(text)) {
@@ -1112,11 +1112,11 @@ function UnsupportedDevice() {
 }
 
 function Server404() {
-  return <main className="grid min-h-dvh place-items-center bg-white text-center text-black"><div><h1 className="text-5xl font-black">404</h1><p className="mt-3 text-lg text-zinc-600">Not Found</p></div></main>;
+  return <main className="grid min-h-dvh place-items-center bg-white text-center text-black"><div><h1 className="text-5xl font-black">404</h1><p className="mt-3 text-lg text-zinc-600">Page introuvable</p></div></main>;
 }
 
 function usd(value: number) {
-  return value.toLocaleString("en-US", { style: "currency", currency: "USD" });
+  return value.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
 }
 
 function rewardForTask(index: number): number {

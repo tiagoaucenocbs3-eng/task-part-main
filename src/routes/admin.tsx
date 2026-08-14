@@ -91,7 +91,7 @@ function AdminDashboard() {
             <h1 className="text-3xl font-black">Admin TikTok Task Partners</h1>
             <p className="text-sm text-slate-400">Vidéos, limites, retraits, utilisateurs et métriques d’avis.</p>
           </div>
-          <div className="rounded-[8px] bg-blue-500/15 px-4 py-2 text-sm font-black text-blue-200">Daily limit: {dailyLimit} videos/user</div>
+          <div className="rounded-[8px] bg-blue-500/15 px-4 py-2 text-sm font-black text-blue-200">Limite quotidienne: {dailyLimit} vidéos/utilisateur</div>
         </header>
 
         <div className="mb-5 grid gap-3 sm:grid-cols-4">
@@ -109,7 +109,7 @@ function AdminDashboard() {
               <input className="h-11 rounded-[8px] bg-white px-3 text-sm font-bold text-black" placeholder="URL de la vidéo" value={url} onChange={(event) => setUrl(event.target.value)} required />
               <input className="h-11 rounded-[8px] bg-white px-3 text-sm font-bold text-black" placeholder="Catégorie" value={category} onChange={(event) => setCategory(event.target.value)} required />
               <input className="h-11 rounded-[8px] bg-white px-3 text-sm font-bold text-black" min={5} max={20} type="number" value={reward} onChange={(event) => setReward(Number(event.target.value))} required />
-              <button className="h-11 rounded-[8px] bg-blue-500 font-black" type="submit">Add</button>
+              <button className="h-11 rounded-[8px] bg-blue-500 font-black" type="submit">Ajouter</button>
             </form>
             <div className="space-y-2">
               {videos.map((video) => (
@@ -157,5 +157,5 @@ function Stat({ icon, label, value }: { icon: ReactNode; label: string; value: s
 }
 
 function money(value: number) {
-  return value.toLocaleString("en-US", { style: "currency", currency: "USD" });
+  return value.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
 }

