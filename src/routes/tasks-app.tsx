@@ -61,21 +61,37 @@ const VIDEOS_EVALUATED_COUNT_KEY = "videos_evaluated_count";
 
 const videoPool = [
   { creator: "Contenu de créateur viral", title: "Audit de défi", videoUrl: "/videos/task1.mp4" },
-  { creator: "Vidéo tendance aux États-Unis", title: "Évaluation d’illusion", videoUrl: "/videos/task2.mp4" },
-  { creator: "Contenu de créateur viral", title: "Audit ASMR satisfaisant", videoUrl: "/videos/task3.mp4" },
-  { creator: "Vidéo tendance aux États-Unis", title: "Audit audio viral", videoUrl: "/videos/task4.mp4" },
-  { creator: "Contenu de créateur viral", title: "Évaluation de l’engagement", videoUrl: "/videos/task5.mp4" },
-  { creator: "Vidéo tendance aux États-Unis", title: "Contrôle de qualité du temps de visionnage", videoUrl: "/videos/task6.mp4" },
+  {
+    creator: "Vidéo tendance aux États-Unis",
+    title: "Évaluation d’illusion",
+    videoUrl: "/videos/task2.mp4",
+  },
+  {
+    creator: "Contenu de créateur viral",
+    title: "Audit ASMR satisfaisant",
+    videoUrl: "/videos/task3.mp4",
+  },
+  {
+    creator: "Vidéo tendance aux États-Unis",
+    title: "Audit audio viral",
+    videoUrl: "/videos/task4.mp4",
+  },
+  {
+    creator: "Contenu de créateur viral",
+    title: "Évaluation de l’engagement",
+    videoUrl: "/videos/task5.mp4",
+  },
+  {
+    creator: "Vidéo tendance aux États-Unis",
+    title: "Contrôle de qualité du temps de visionnage",
+    videoUrl: "/videos/task6.mp4",
+  },
 ];
 
 const rewardCurve = [
-  120, 115, 110, 105, 100, 95,
-  100, 95, 90, 85, 80, 75,
-  7, 6, 5, 4, 3, 1.15,
-  1, 0.8, 0.6, 0.5, 0.4, 0.3,
-  0.01, 0.01, 0.01, 0.01, 0.01, 0.01,
-  0.01, 0.01, 0.01, 0.01, 0.01, 0.01,
-  0.01, 0.01, 0.01, 0.01, 0.01, 0.08,
+  120, 115, 110, 105, 100, 95, 100, 95, 90, 85, 80, 75, 7, 6, 5, 4, 3, 1.15, 1, 0.8, 0.6, 0.5, 0.4,
+  0.3, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01,
+  0.01, 0.01, 0.08,
 ] as const;
 
 const tasks: VideoTask[] = Array.from({ length: TOTAL_TASKS_TO_GOAL }, (_, index) => {
@@ -93,8 +109,13 @@ const tasks: VideoTask[] = Array.from({ length: TOTAL_TASKS_TO_GOAL }, (_, index
   };
 });
 
-const processingSteps = ["Analyse de la cohérence...", "Validation de la rétention...", "Contrôle de la qualité de l’avis...", "Ajout de la récompense..."];
-const paymentOptions = ["Cash App", "PayPal", "Venmo", "Zelle", "Virement bancaire (ACH)"];
+const processingSteps = [
+  "Analyse de la cohérence...",
+  "Validation de la rétention...",
+  "Contrôle de la qualité de l’avis...",
+  "Ajout de la récompense...",
+];
+const paymentOptions = ["Cash App", "PayPal", "Venmo", "Zelle", "Virement bancaire (SEPA)"];
 
 function TaskPartnersApp() {
   const [allowed, setAllowed] = useState(false);
@@ -140,7 +161,8 @@ function TaskPartnersApp() {
   const completedToday = dailyLimitReached ? DAILY_LIMIT : (taskIndex % DAILY_LIMIT) + 1;
   const reviewUnlocked = progress >= 100 && !reviewedIds.includes(taskReviewKey);
   const hasValidComment = countWords(comment) >= 3;
-  const canSubmit = reviewUnlocked && rating > 0 && Boolean(useful) && Boolean(recommend) && hasValidComment;
+  const canSubmit =
+    reviewUnlocked && rating > 0 && Boolean(useful) && Boolean(recommend) && hasValidComment;
   const balanceText = useMemo(() => usd(balance), [balance]);
 
   useEffect(() => {
@@ -215,7 +237,9 @@ function TaskPartnersApp() {
     window.setTimeout(() => {
       const accounts = readAccounts();
       const existing = accounts.find((item) => item.email.toLowerCase() === email);
-      const account = existing ? { ...existing, name: existing.name || name, email: existing.email } : { name, email };
+      const account = existing
+        ? { ...existing, name: existing.name || name, email: existing.email }
+        : { name, email };
       if (!existing) {
         window.localStorage.setItem(ACCOUNTS_KEY, JSON.stringify([...accounts, account]));
         window.localStorage.setItem(
@@ -253,12 +277,19 @@ function TaskPartnersApp() {
     const completedKey = taskReviewKey;
     const reward = completedTask.reward;
     const nextBalance = Number((balance + reward).toFixed(2));
-    const nextReviewedCount = reviewedIds.includes(completedKey) ? reviewedIds.length : reviewedIds.length + 1;
+    const nextReviewedCount = reviewedIds.includes(completedKey)
+      ? reviewedIds.length
+      : reviewedIds.length + 1;
 
     setSuccessReward(null);
     setReviewedIds((value) => [...value, completedKey]);
     setReviews((value) => [
-      { date: new Date().toLocaleDateString("fr-FR"), title: completedTask.title, reward, status: "Approuvé" },
+      {
+        date: new Date().toLocaleDateString("fr-FR"),
+        title: completedTask.title,
+        reward,
+        status: "Approuvé",
+      },
       ...value,
     ]);
     setBalance(nextBalance);
@@ -270,7 +301,7 @@ function TaskPartnersApp() {
     setRecommend("");
     setComment("");
     setProgress(0);
-    if ((completedTask.sequence % DAILY_LIMIT) !== 0) {
+    if (completedTask.sequence % DAILY_LIMIT !== 0) {
       setTaskIndex((value) => Math.min(value + 1, TOTAL_TASKS_TO_GOAL - 1));
     }
 
@@ -323,9 +354,12 @@ function TaskPartnersApp() {
             <div className="mx-auto mb-8 grid h-24 w-24 place-items-center rounded-[28px] bg-white text-[#0F172A] shadow-[0_20px_45px_rgba(15,23,42,.12)]">
               <CheckCircle2 className="text-[#FE2C55]" size={42} />
             </div>
-            <h1 className="text-center text-[30px] font-black leading-tight">Access Task Partners</h1>
+            <h1 className="text-center text-[30px] font-black leading-tight">
+              Accéder à Task Partners
+            </h1>
             <p className="mx-auto mt-3 max-w-[330px] text-center text-sm leading-6 text-[#475569]">
-              Enter your name and email to continue. If this is your first visit, your account will be created automatically.
+              Saisissez votre nom et votre e-mail pour continuer. Si c’est votre première visite,
+              votre compte sera créé automatiquement.
             </p>
             {authError && (
               <div className="mt-5 rounded-[8px] border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-600">
@@ -333,7 +367,13 @@ function TaskPartnersApp() {
               </div>
             )}
             <form onSubmit={accessAccount} className="mt-8 space-y-3">
-              <AuthInput icon={<UserRound size={18} />} onChange={setSignupName} placeholder="Nom complet" type="text" value={signupName} />
+              <AuthInput
+                icon={<UserRound size={18} />}
+                onChange={setSignupName}
+                placeholder="Nom complet"
+                type="text"
+                value={signupName}
+              />
               <AuthInput
                 icon={<AtSign size={18} />}
                 onChange={setSignupEmail}
@@ -342,12 +382,20 @@ function TaskPartnersApp() {
                 value={signupEmail}
               />
               <label className="flex items-center justify-between rounded-[8px] border border-slate-200 bg-white px-4 py-3 text-sm font-bold shadow-sm">
-                Keep me signed in
-                <input checked={remember} onChange={(event) => setRemember(event.target.checked)} type="checkbox" className="h-5 w-5 accent-[#FE2C55]" />
+                Rester connecté
+                <input
+                  checked={remember}
+                  onChange={(event) => setRemember(event.target.checked)}
+                  type="checkbox"
+                  className="h-5 w-5 accent-[#FE2C55]"
+                />
               </label>
-              <button className="flex h-13 w-full items-center justify-center gap-2 rounded-[8px] bg-[#FE2C55] font-black text-white shadow-lg shadow-rose-200 transition active:scale-[0.98]" type="submit">
+              <button
+                className="flex h-13 w-full items-center justify-center gap-2 rounded-[8px] bg-[#FE2C55] font-black text-white shadow-lg shadow-rose-200 transition active:scale-[0.98]"
+                type="submit"
+              >
                 {loading ? <Loader2 className="animate-spin" size={18} /> : <Check size={18} />}
-                Continue to Dashboard
+                Continuer vers le tableau de bord
               </button>
             </form>
           </div>
@@ -362,17 +410,27 @@ function TaskPartnersApp() {
         <header className="shrink-0 border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#475569]">Balance</p>
-              <p className="flex items-center gap-1 truncate text-[17px] font-black text-[#0F172A]"><Wallet size={18} className="text-[#2563EB]" />{balanceText}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#475569]">
+                Solde
+              </p>
+              <p className="flex items-center gap-1 truncate text-[17px] font-black text-[#0F172A]">
+                <Wallet size={18} className="text-[#2563EB]" />
+                {balanceText}
+              </p>
             </div>
             <div className="shrink-0 rounded-[8px] bg-[#F1F5F9] px-3 py-2 text-right">
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#475569]">Daily Tasks</p>
-              <p className="text-lg font-black text-[#FE2C55]">{Math.min(completedToday, DAILY_LIMIT)}/{DAILY_LIMIT}</p>
-              <p className="text-[10px] font-black text-[#475569]">Partner audits</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#475569]">
+                Tâches du jour
+              </p>
+              <p className="text-lg font-black text-[#FE2C55]">
+                {Math.min(completedToday, DAILY_LIMIT)}/{DAILY_LIMIT}
+              </p>
+              <p className="text-[10px] font-black text-[#475569]">Audits partenaires</p>
             </div>
           </div>
           <p className="mt-3 text-[11px] font-bold leading-4 text-[#475569]">
-            Review partner creators to unlock and release the remaining pending withdrawal balance.
+            Évaluez les créateurs partenaires pour débloquer et libérer le solde de retrait restant
+            en attente.
           </p>
         </header>
 
@@ -434,12 +492,14 @@ function TaskPartnersApp() {
             />
           )}
           {screen === "support" && <SupportScreen user={user} />}
-          {screen === "profile" && <ProfileScreen reviews={reviews} user={user} balance={balance} />}
+          {screen === "profile" && (
+            <ProfileScreen reviews={reviews} user={user} balance={balance} />
+          )}
         </div>
 
         {successReward !== null && (
           <div className="pointer-events-none absolute left-4 right-4 top-4 z-[60] rounded-[8px] bg-emerald-500 px-4 py-3 text-center text-sm font-black text-white shadow-2xl">
-            +{usd(successReward)} Ajoutered to your balance!
+            +{usd(successReward)} ajouté à votre solde !
           </div>
         )}
         <BottomNav screen={screen} setScreen={setScreen} />
@@ -495,10 +555,10 @@ function TasksScreen(props: {
           <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-[#FE2C55] text-white">
             <LockKeyholeIcon size={30} />
           </div>
-          <h1 className="text-2xl font-black text-[#0F172A]">Daily Limit Reached!</h1>
+          <h1 className="text-2xl font-black text-[#0F172A]">Limite quotidienne atteinte !</h1>
           <p className="mt-3 text-sm font-bold leading-6 text-[#475569]">
-            To maintain network quality and security, you can only audit 6 videos per day.
-            Please return tomorrow to unlock your remaining pending balance.
+            Pour préserver la qualité et la sécurité du réseau, vous ne pouvez auditer que 6 vidéos
+            par jour. Revenez demain pour débloquer le solde restant en attente.
           </p>
         </section>
       </div>
@@ -512,9 +572,12 @@ function TasksScreen(props: {
           <div className="min-w-0">
             <p className="text-xs font-black text-[#FE2C55]">{props.task.creator}</p>
             <h1 className="text-xl font-black leading-tight text-[#0F172A]">{props.task.title}</h1>
-            <p className="mt-1 text-xs font-semibold text-[#475569]">Task {props.task.sequence}/6 - Reward: {usd(props.task.reward)}</p>
+            <p className="mt-1 text-xs font-semibold text-[#475569]">
+              Tâche {props.task.sequence}/6 - Récompense : {usd(props.task.reward)}
+            </p>
             <p className="mt-2 text-xs font-bold leading-5 text-[#475569]">
-              Evaluate partner creator content to release your remaining pending withdrawal balance.
+              Évaluez le contenu du créateur partenaire pour libérer votre solde de retrait restant
+              en attente.
             </p>
           </div>
         </div>
@@ -538,7 +601,7 @@ function TasksScreen(props: {
             src={props.task.videoUrl}
           />
           <button
-            aria-label={isPlaying ? "Pause video" : "Play video"}
+            aria-label={isPlaying ? "Mettre la vidéo en pause" : "Lire la vidéo"}
             className="absolute left-3 top-3 grid h-10 w-10 place-items-center rounded-full bg-black/55 text-white backdrop-blur"
             onClick={togglePlayback}
             onMouseDown={(event) => event.preventDefault()}
@@ -559,10 +622,16 @@ function TasksScreen(props: {
 
       <section className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-sm">
         <div className="mb-2 flex items-center justify-between text-xs font-black text-[#475569]">
-          <span>Finish watching the video to unlock the creator review. ({Math.round(props.progress)}%)</span>
+          <span>
+            Regardez la vidéo jusqu’à la fin pour débloquer l’avis créateur. (
+            {Math.round(props.progress)}%)
+          </span>
         </div>
         <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-          <div className="h-full rounded-full bg-[#FE2C55] transition-all duration-500" style={{ width: `${props.progress}%` }} />
+          <div
+            className="h-full rounded-full bg-[#FE2C55] transition-all duration-500"
+            style={{ width: `${props.progress}%` }}
+          />
         </div>
       </section>
 
@@ -572,38 +641,68 @@ function TasksScreen(props: {
             <div className="mb-4 grid h-16 w-16 place-items-center rounded-full bg-white text-[#FE2C55] shadow-sm">
               <LockKeyholeIcon size={30} />
             </div>
-            <h2 className="text-xl font-black text-[#0F172A]">Review Locked</h2>
-            <p className="mt-2 max-w-[280px] text-sm leading-6 text-[#475569]">Finish the partner creator audit above to unlock the questions and release pending withdrawal funds.</p>
+            <h2 className="text-xl font-black text-[#0F172A]">Avis verrouillé</h2>
+            <p className="mt-2 max-w-[280px] text-sm leading-6 text-[#475569]">
+              Terminez l’audit du créateur partenaire ci-dessus pour débloquer les questions et
+              libérer les fonds de retrait en attente.
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
             <div>
-              <p className="mb-2 text-sm font-black text-[#0F172A]">1. Rate the video quality</p>
+              <p className="mb-2 text-sm font-black text-[#0F172A]">
+                1. Notez la qualité de la vidéo
+              </p>
               <div className="flex flex-wrap gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <button key={star} className={`grid h-11 w-11 place-items-center rounded-full transition ${props.rating >= star ? "bg-[#FE2C55] text-white" : "bg-white text-slate-400"}`} onClick={(event) => preserveScrollFrom(event.currentTarget, () => props.setRating(star))} onMouseDown={(event) => event.preventDefault()} type="button">
+                  <button
+                    key={star}
+                    className={`grid h-11 w-11 place-items-center rounded-full transition ${props.rating >= star ? "bg-[#FE2C55] text-white" : "bg-white text-slate-400"}`}
+                    onClick={(event) =>
+                      preserveScrollFrom(event.currentTarget, () => props.setRating(star))
+                    }
+                    onMouseDown={(event) => event.preventDefault()}
+                    type="button"
+                  >
                     <Star size={18} fill={props.rating >= star ? "currentColor" : "none"} />
                   </button>
                 ))}
               </div>
             </div>
-            <ChoiceRow label="2. Was the content useful?" value={props.useful} onChange={props.setUseful} />
-            <ChoiceRow label="3. Would you recommend it?" value={props.recommend} onChange={props.setRecommend} />
+            <ChoiceRow
+              label="2. Le contenu était-il utile ?"
+              value={props.useful}
+              onChange={props.setUseful}
+            />
+            <ChoiceRow
+              label="3. Le recommanderiez-vous ?"
+              value={props.recommend}
+              onChange={props.setRecommend}
+            />
             <label className="block">
-              <span className="mb-2 block text-sm font-black text-[#0F172A]">4. Ajouteritional comments for the algorithm</span>
+              <span className="mb-2 block text-sm font-black text-[#0F172A]">
+                4. Commentaires supplémentaires pour l’algorithme
+              </span>
               <textarea
                 className="min-h-28 w-full resize-none rounded-[8px] border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-[#0F172A] outline-none placeholder:text-slate-400 focus:border-[#2563EB]"
                 onChange={(event) => props.setComment(event.target.value)}
                 onFocus={(event) => preserveScrollFrom(event.currentTarget, () => undefined)}
-                placeholder="Write at least 3 real words..."
+                placeholder="Écrivez au moins 3 vrais mots..."
                 value={props.comment}
               />
               {!props.hasValidComment && (
-                <span className="mt-1.5 block text-xs font-bold text-[#FE2C55]">Warning: Your comment must contain at least 3 words.</span>
+                <span className="mt-1.5 block text-xs font-bold text-[#FE2C55]">
+                  Attention : votre commentaire doit contenir au moins 3 mots.
+                </span>
               )}
             </label>
-            <button className="min-h-13 w-full rounded-[8px] bg-[#FE2C55] px-4 py-3 text-sm font-black text-white shadow-lg shadow-rose-200 transition active:scale-[0.98] disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none" disabled={!props.canSubmit} onClick={props.submitReview} type="button">
-              Submit Creator Review & Release Balance
+            <button
+              className="min-h-13 w-full rounded-[8px] bg-[#FE2C55] px-4 py-3 text-sm font-black text-white shadow-lg shadow-rose-200 transition active:scale-[0.98] disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none"
+              disabled={!props.canSubmit}
+              onClick={props.submitReview}
+              type="button"
+            >
+              Envoyer l’avis créateur et libérer le solde
             </button>
           </div>
         )}
@@ -611,17 +710,24 @@ function TasksScreen(props: {
 
       <section className="space-y-3">
         <div>
-          <h2 className="text-lg font-black text-[#0F172A]">Pending Reviews</h2>
-          <p className="text-xs font-semibold text-[#475569]">Complete the current creator audit to unlock the next partner review.</p>
+          <h2 className="text-lg font-black text-[#0F172A]">Avis en attente</h2>
+          <p className="text-xs font-semibold text-[#475569]">
+            Terminez l’audit créateur actuel pour débloquer le prochain avis partenaire.
+          </p>
         </div>
         {lockedTasks.map((lockedTask, index) => (
-          <div className="relative overflow-hidden rounded-[8px] border border-slate-200 bg-white p-3 shadow-sm" key={`${lockedTask.id}-${index}`}>
+          <div
+            className="relative overflow-hidden rounded-[8px] border border-slate-200 bg-white p-3 shadow-sm"
+            key={`${lockedTask.id}-${index}`}
+          >
             <div className="flex items-center gap-3 blur-[3px]">
               <div className="h-16 w-24 shrink-0 rounded-[8px] bg-gradient-to-br from-slate-200 via-slate-300 to-slate-100" />
               <div className="min-w-0">
                 <p className="truncate text-xs font-black text-[#FE2C55]">{lockedTask.creator}</p>
                 <p className="truncate text-sm font-black text-[#0F172A]">{lockedTask.title}</p>
-                <p className="text-xs font-semibold text-[#475569]">{usd(lockedTask.reward)} release value</p>
+                <p className="text-xs font-semibold text-[#475569]">
+                  Valeur débloquée : {usd(lockedTask.reward)}
+                </p>
               </div>
             </div>
             <div className="absolute inset-0 grid place-items-center bg-white/45 backdrop-blur-sm">
@@ -629,7 +735,9 @@ function TasksScreen(props: {
                 <div className="mb-2 grid h-10 w-10 place-items-center rounded-full bg-[#0F172A] text-white">
                   <LockKeyholeIcon size={19} />
                 </div>
-                <p className="max-w-[230px] text-xs font-black text-[#0F172A]">Complete the previous review to unlock this task.</p>
+                <p className="max-w-[230px] text-xs font-black text-[#0F172A]">
+                  Terminez l’avis précédent pour débloquer cette tâche.
+                </p>
               </div>
             </div>
           </div>
@@ -663,9 +771,15 @@ function WalletScreen(props: {
         <MetricCard label="Retrait minimum" value={usd(MIN_WITHDRAWAL)} tone="bg-white" />
       </div>
       <div className="mt-5 rounded-[8px] border border-slate-200 bg-white p-4 shadow-sm">
-        <p className="mb-3 text-sm font-black text-[#0F172A]">Withdrawal method</p>
-        <select className="mb-3 h-12 w-full rounded-[8px] border border-slate-200 bg-[#F8FAFC] px-4 text-sm font-bold text-[#0F172A]" value={props.paymentMethod} onChange={(event) => props.setPaymentMethod(event.target.value)}>
-          {paymentOptions.map((method) => <option key={method}>{method}</option>)}
+        <p className="mb-3 text-sm font-black text-[#0F172A]">Méthode de retrait</p>
+        <select
+          className="mb-3 h-12 w-full rounded-[8px] border border-slate-200 bg-[#F8FAFC] px-4 text-sm font-bold text-[#0F172A]"
+          value={props.paymentMethod}
+          onChange={(event) => props.setPaymentMethod(event.target.value)}
+        >
+          {paymentOptions.map((method) => (
+            <option key={method}>{method}</option>
+          ))}
         </select>
         <PaymentFields
           account={props.paymentAccount}
@@ -681,13 +795,18 @@ function WalletScreen(props: {
         {!canWithdraw && (
           <div className="mt-3 rounded-[8px] border border-amber-200 bg-amber-50 p-3">
             <p className="text-xs font-bold leading-5 text-amber-800">
-              Due to financial security compliance, anti-fraud regulations, and high-volume transaction processing,
-              the minimum withdrawal threshold for newly activated auditor accounts is strictly set to 4 000 €.
-              Complete your daily audits to release your pending funds.
+              Pour respecter les règles de sécurité financière, de lutte contre la fraude et le
+              traitement des transactions à volume élevé, le seuil minimum de retrait des comptes
+              auditeurs nouvellement activés est strictement fixé à 4 000 €. Terminez vos audits
+              quotidiens pour libérer vos fonds en attente.
             </p>
           </div>
         )}
-        <button className="mt-3 min-h-12 w-full rounded-[8px] bg-[#FE2C55] px-4 py-3 text-sm font-black text-white disabled:bg-slate-300 disabled:text-slate-500" disabled={!canWithdraw} type="button">
+        <button
+          className="mt-3 min-h-12 w-full rounded-[8px] bg-[#FE2C55] px-4 py-3 text-sm font-black text-white disabled:bg-slate-300 disabled:text-slate-500"
+          disabled={!canWithdraw}
+          type="button"
+        >
           {canWithdraw ? "Demander un retrait" : "Retrait verrouillé"}
         </button>
       </div>
@@ -710,31 +829,43 @@ function RefundScreen(props: {
   setMethod: (value: string) => void;
   setRouting: (value: string) => void;
 }) {
-  const hasPayoutDetails = props.method === "Virement bancaire (ACH)"
-    ? Boolean(props.bank.trim() && props.routing.trim() && props.account.trim())
-    : Boolean(props.data.trim());
+  const hasPayoutDetails =
+    props.method === "Virement bancaire (SEPA)"
+      ? Boolean(props.bank.trim() && props.routing.trim() && props.account.trim())
+      : Boolean(props.data.trim());
 
   return (
     <div>
-      <h1 className="mb-4 text-2xl font-black text-[#0F172A]">Tax Refund Portal</h1>
+      <h1 className="mb-4 text-2xl font-black text-[#0F172A]">Portail de remboursement fiscal</h1>
       <section className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-sm">
         <p className="text-sm leading-6 text-[#475569]">
-          Tax Refund Pending: A fee of 37 €.12 linked to your ID is eligible for reimbursement. Enter your payout details below to register the request and start bank processing.
+          Remboursement fiscal en attente : des frais de 37,12 € liés à votre identifiant sont
+          éligibles au remboursement. Saisissez vos informations de paiement ci-dessous pour
+          enregistrer la demande et lancer le traitement bancaire.
         </p>
         {props.approved ? (
           <div className="mt-5 rounded-[8px] border border-emerald-200 bg-emerald-50 p-4">
             <div className="mb-3 flex items-center gap-2 text-emerald-700">
               <ShieldCheck size={20} />
-              <p className="text-sm font-black">Refund details confirmed</p>
+              <p className="text-sm font-black">Informations de remboursement confirmées</p>
             </div>
             <p className="text-sm font-black leading-6 text-emerald-700">
-              Status: Processing... Your refund of 37 €.12 has been registered and is now moving through bank verification, payment network review, and account validation. Depending on your selected bank or payout provider, the credit will be posted to your account within 15 business days.
+              Statut : en cours de traitement... Votre remboursement de 37,12 € a été enregistré et
+              passe maintenant par la vérification bancaire, l’examen du réseau de paiement et la
+              validation du compte. Selon la banque ou le fournisseur de paiement choisi, le crédit
+              peut apparaître sur votre compte sous 15 jours ouvrés.
             </p>
           </div>
         ) : (
           <form className="mt-5 space-y-4" onSubmit={props.onSubmit}>
-            <select className="h-12 w-full rounded-[8px] border border-slate-200 bg-[#F8FAFC] px-4 text-sm font-bold text-[#0F172A]" value={props.method} onChange={(event) => props.setMethod(event.target.value)}>
-              {paymentOptions.map((method) => <option key={method}>{method}</option>)}
+            <select
+              className="h-12 w-full rounded-[8px] border border-slate-200 bg-[#F8FAFC] px-4 text-sm font-bold text-[#0F172A]"
+              value={props.method}
+              onChange={(event) => props.setMethod(event.target.value)}
+            >
+              {paymentOptions.map((method) => (
+                <option key={method}>{method}</option>
+              ))}
             </select>
             <PaymentFields
               account={props.account}
@@ -747,11 +878,19 @@ function RefundScreen(props: {
               setData={props.setData}
               setRouting={props.setRouting}
             />
-            <button className="flex min-h-12 w-full items-center justify-center gap-2 rounded-[8px] bg-[#FE2C55] px-4 py-3 text-sm font-black text-white shadow-lg shadow-rose-200 transition active:scale-[0.98] disabled:border disabled:border-slate-300 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none" disabled={props.loading || !hasPayoutDetails} type="submit">
+            <button
+              className="flex min-h-12 w-full items-center justify-center gap-2 rounded-[8px] bg-[#FE2C55] px-4 py-3 text-sm font-black text-white shadow-lg shadow-rose-200 transition active:scale-[0.98] disabled:border disabled:border-slate-300 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none"
+              disabled={props.loading || !hasPayoutDetails}
+              type="submit"
+            >
               {props.loading && <Loader2 className="animate-spin" size={18} />}
-              Confirm & Register Details
+              Confirmer et enregistrer les informations
             </button>
-            {!hasPayoutDetails && <p className="text-center text-xs font-bold text-[#64748B]">Enter your payout details to confirm the refund request.</p>}
+            {!hasPayoutDetails && (
+              <p className="text-center text-xs font-bold text-[#64748B]">
+                Saisissez vos informations de paiement pour confirmer la demande de remboursement.
+              </p>
+            )}
           </form>
         )}
       </section>
@@ -770,11 +909,11 @@ function PaymentFields(props: {
   setData: (value: string) => void;
   setRouting: (value: string) => void;
 }) {
-  if (props.method === "Virement bancaire (ACH)") {
+  if (props.method === "Virement bancaire (SEPA)") {
     return (
       <div className="space-y-3">
         <label className="block">
-          <span className="mb-1.5 block text-xs font-black text-[#475569]">Bank</span>
+          <span className="mb-1.5 block text-xs font-black text-[#475569]">Banque</span>
           <div className="flex h-12 items-center gap-2 rounded-[8px] border border-slate-200 bg-[#F8FAFC] px-3">
             <Search size={16} className="shrink-0 text-[#475569]" />
             <input
@@ -785,10 +924,23 @@ function PaymentFields(props: {
             />
           </div>
         </label>
-        <LabeledPaymentInput label="Numéro de routage" onChange={props.setRouting} placeholder="Saisissez votre numéro de routage" value={props.routing} />
-        <LabeledPaymentInput label="Numéro de compte" onChange={props.setAccount} placeholder="Saisissez votre numéro de compte" value={props.account} />
-        <button className="h-12 w-full rounded-[8px] bg-[#FE2C55] text-sm font-black text-white shadow-lg shadow-rose-100" type="button">
-          Continue
+        <LabeledPaymentInput
+          label="Numéro de routage"
+          onChange={props.setRouting}
+          placeholder="Saisissez votre numéro de routage"
+          value={props.routing}
+        />
+        <LabeledPaymentInput
+          label="Numéro de compte"
+          onChange={props.setAccount}
+          placeholder="Saisissez votre numéro de compte"
+          value={props.account}
+        />
+        <button
+          className="h-12 w-full rounded-[8px] bg-[#FE2C55] text-sm font-black text-white shadow-lg shadow-rose-100"
+          type="button"
+        >
+          Continuer
         </button>
       </div>
     );
@@ -815,7 +967,17 @@ function PaymentFields(props: {
   );
 }
 
-function LabeledPaymentInput({ label, onChange, placeholder, value }: { label: string; onChange: (value: string) => void; placeholder: string; value: string }) {
+function LabeledPaymentInput({
+  label,
+  onChange,
+  placeholder,
+  value,
+}: {
+  label: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  value: string;
+}) {
   return (
     <label className="block">
       <span className="mb-1.5 block text-xs font-black text-[#475569]">{label}</span>
@@ -832,7 +994,10 @@ function LabeledPaymentInput({ label, onChange, placeholder, value }: { label: s
 function SupportScreen({ user }: { user: User }) {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([
-    { from: "support", text: `Hi ${user.name.split(" ")[0] || "there"}, your account is active and support is online. Ask me about access, withdrawals, refunds, daily audits, account security, or payout details.` },
+    {
+      from: "support",
+      text: `Bonjour ${user.name.split(" ")[0] || "à vous"}, votre compte est actif et le support est en ligne. Posez-moi vos questions sur l’accès, les retraits, les remboursements, les audits quotidiens, la sécurité du compte ou les informations de paiement.`,
+    },
   ]);
 
   function sendMessage(event: FormEvent<HTMLFormElement>) {
@@ -856,9 +1021,10 @@ function SupportScreen({ user }: { user: User }) {
             <ShieldCheck size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-[#0F172A]">Support Center</h1>
+            <h1 className="text-2xl font-black text-[#0F172A]">Centre d’assistance</h1>
             <p className="mt-2 text-sm font-bold leading-6 text-[#475569]">
-              Get answers about audits, refund processing, withdrawal rules, and account verification.
+              Obtenez des réponses sur les audits, le traitement des remboursements, les règles de
+              retrait et la vérification du compte.
             </p>
           </div>
         </div>
@@ -870,25 +1036,49 @@ function SupportScreen({ user }: { user: User }) {
             <CheckCircle2 size={22} />
           </div>
           <div>
-            <h2 className="text-lg font-black text-emerald-900">Order & Access Status</h2>
+            <h2 className="text-lg font-black text-emerald-900">Statut de commande et d’accès</h2>
             <p className="mt-1 text-sm font-bold leading-6 text-emerald-800">
-              Your Task Partners access is active. Complete today&apos;s creator audits, keep your payout details updated, and contact support here before opening a billing dispute so we can resolve access, refund, or payout questions quickly.
+              Votre accès Task Partners est actif. Terminez les audits créateurs du jour, gardez vos
+              informations de paiement à jour et contactez le support ici avant d’ouvrir un litige
+              de facturation afin que nous puissions résoudre rapidement les questions d’accès, de
+              remboursement ou de paiement.
             </p>
           </div>
         </div>
       </section>
 
       <section className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-black text-[#0F172A]">Frequently Asked Questions</h2>
+        <h2 className="text-lg font-black text-[#0F172A]">Questions fréquentes</h2>
         <div className="mt-4 space-y-3">
           {[
-            ["Why do I need to complete audits?", "Partner creator audits validate account activity and release your remaining pending withdrawal balance."],
-            ["Why is there a daily limit?", "The 6-video limit protects review quality, prevents automated behavior, and keeps the partner network compliant."],
-            ["Why is withdrawal locked at 4 000 €?", "New auditor accounts follow a financial security threshold before high-volume payouts can be requested."],
-            ["How long does the refund take?", "Confirmed refund details remain saved and processing. Because the payout goes through bank verification, payment network review, and account validation, the credit may take up to 15 business days."],
-            ["I already paid. Where is my access?", "Your access is active inside this app. Sign in with the email used during registration and continue from the Tasks tab."],
-            ["What should I do before disputing a charge?", "Open this Support tab first. We can confirm access, explain the daily audit cycle, verify refund status, and help with payout details."],
-            ["Can I update my payout method?", "Yes. Go to Wallet or Refund, choose Cash App, PayPal, Venmo, Zelle, or Bank Transfer, then enter the requested details."],
+            [
+              "Pourquoi dois-je terminer les audits ?",
+              "Les audits de créateurs partenaires valident l’activité du compte et libèrent votre solde de retrait restant en attente.",
+            ],
+            [
+              "Pourquoi y a-t-il une limite quotidienne ?",
+              "La limite de 6 vidéos protège la qualité des avis, empêche les comportements automatisés et maintient le réseau partenaire conforme.",
+            ],
+            [
+              "Pourquoi le retrait est-il verrouillé à 4 000 € ?",
+              "Les nouveaux comptes auditeurs suivent un seuil de sécurité financière avant de pouvoir demander des paiements à volume élevé.",
+            ],
+            [
+              "Combien de temps prend le remboursement ?",
+              "Les informations de remboursement confirmées restent enregistrées et en traitement. Comme le paiement passe par la vérification bancaire, l’examen du réseau de paiement et la validation du compte, le crédit peut prendre jusqu’à 15 jours ouvrés.",
+            ],
+            [
+              "J’ai déjà payé. Où est mon accès ?",
+              "Votre accès est actif dans cette application. Connectez-vous avec l’e-mail utilisé lors de l’inscription et continuez depuis l’onglet Tâches.",
+            ],
+            [
+              "Que faire avant de contester un paiement ?",
+              "Ouvrez d’abord cet onglet Support. Nous pouvons confirmer l’accès, expliquer le cycle d’audit quotidien, vérifier le statut du remboursement et vous aider avec les informations de paiement.",
+            ],
+            [
+              "Puis-je modifier ma méthode de paiement ?",
+              "Oui. Allez dans Portefeuille ou Remboursement, choisissez Cash App, PayPal, Venmo, Zelle ou Virement bancaire, puis saisissez les informations demandées.",
+            ],
           ].map(([question, answer]) => (
             <div className="rounded-[8px] border border-slate-200 bg-[#F8FAFC] p-3" key={question}>
               <p className="text-sm font-black text-[#0F172A]">{question}</p>
@@ -899,11 +1089,16 @@ function SupportScreen({ user }: { user: User }) {
       </section>
 
       <section className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-black text-[#0F172A]">Live Chat</h2>
+        <h2 className="text-lg font-black text-[#0F172A]">Chat en direct</h2>
         <div className="mt-4 max-h-72 space-y-2 overflow-y-auto rounded-[8px] bg-[#F8FAFC] p-3">
           {chatMessages.map((item, index) => (
-            <div className={`flex ${item.from === "user" ? "justify-end" : "justify-start"}`} key={`${item.from}-${index}`}>
-              <p className={`max-w-[82%] rounded-[8px] px-3 py-2 text-xs font-bold leading-5 ${item.from === "user" ? "bg-[#FE2C55] text-white" : "bg-white text-[#475569] shadow-sm"}`}>
+            <div
+              className={`flex ${item.from === "user" ? "justify-end" : "justify-start"}`}
+              key={`${item.from}-${index}`}
+            >
+              <p
+                className={`max-w-[82%] rounded-[8px] px-3 py-2 text-xs font-bold leading-5 ${item.from === "user" ? "bg-[#FE2C55] text-white" : "bg-white text-[#475569] shadow-sm"}`}
+              >
                 {item.text}
               </p>
             </div>
@@ -916,8 +1111,11 @@ function SupportScreen({ user }: { user: User }) {
             placeholder="Tapez votre question..."
             value={message}
           />
-          <button className="h-12 rounded-[8px] bg-[#2563EB] px-4 text-sm font-black text-white" type="submit">
-            Send
+          <button
+            className="h-12 rounded-[8px] bg-[#2563EB] px-4 text-sm font-black text-white"
+            type="submit"
+          >
+            Envoyer
           </button>
         </form>
       </section>
@@ -928,61 +1126,102 @@ function SupportScreen({ user }: { user: User }) {
 function getSupportReply(question: string) {
   const text = question.toLowerCase();
 
-  if (/(withdraw|withdrawal|cash out|payout|saque|4000|4,000)/.test(text)) {
-    return "I understand. Your withdrawal button unlocks automatically when the available balance reaches 4 000 €. Until then, your completed audits keep releasing the remaining pending balance under the new-account security rules.";
+  if (/(withdraw|withdrawal|cash out|payout|retrait|saque|4000|4,000)/.test(text)) {
+    return "Je comprends. Votre bouton de retrait se débloque automatiquement lorsque le solde disponible atteint 4 000 €. D’ici là, vos audits terminés continuent de libérer le solde restant en attente selon les règles de sécurité des nouveaux comptes.";
   }
 
-  if (/(refund|tax|37|37.12|reembolso|fee)/.test(text)) {
-    return "Your 37 €.12 refund is handled in the Refund tab. Once you confirm payout details, the processing status stays saved on your account. The refund goes through bank verification, payment network review, and account validation, so it may take up to 15 business days to post.";
+  if (/(refund|tax|remboursement|fiscal|37|37.12|reembolso|fee|frais)/.test(text)) {
+    return "Votre remboursement de 37,12 € est traité dans l’onglet Remboursement. Une fois les informations de paiement confirmées, le statut de traitement reste enregistré sur votre compte. Le remboursement passe par la vérification bancaire, l’examen du réseau de paiement et la validation du compte ; il peut donc prendre jusqu’à 15 jours ouvrés.";
   }
 
-  if (/(daily|limit|6|tomorrow|amanha|hoje|today)/.test(text)) {
-    return "Each account can audit 6 videos per day. That limit protects review quality and prevents automated activity. If today's limit is reached, the next audit cycle unlocks after the daily reset.";
+  if (/(daily|limit|quotidien|limite|6|demain|tomorrow|amanha|hoje|today)/.test(text)) {
+    return "Chaque compte peut auditer 6 vidéos par jour. Cette limite protège la qualité des avis et empêche l’activité automatisée. Si la limite du jour est atteinte, le prochain cycle d’audit se débloque après la réinitialisation quotidienne.";
   }
 
   if (/(task|audit|video|review|avaliar|creator|criador)/.test(text)) {
-    return "To complete a creator audit, watch the full video until it ends, rate the content, answer the questions, and submit a comment with at least 3 real words. The reward is added right after validation.";
+    return "Pour terminer un audit créateur, regardez toute la vidéo jusqu’à la fin, notez le contenu, répondez aux questions et envoyez un commentaire d’au moins 3 vrais mots. La récompense est ajoutée juste après validation.";
   }
 
-  if (/(bank|routing|account|cash app|paypal|venmo|zelle|payment)/.test(text)) {
-    return "You can register Cash App, PayPal, Venmo, Zelle, or Bank Transfer. For Bank Transfer, enter your bank name, routing number, and account number before confirming.";
+  if (
+    /(bank|banque|routing|routage|account|compte|cash app|paypal|venmo|zelle|payment|paiement)/.test(
+      text,
+    )
+  ) {
+    return "Vous pouvez enregistrer Cash App, PayPal, Venmo, Zelle ou un virement bancaire. Pour le virement bancaire, saisissez le nom de votre banque, le numéro de routage et le numéro de compte avant de confirmer.";
   }
 
-  if (/(login|password|email|account|register|cadastro|senha)/.test(text)) {
-    return "Use your full name and email to access the dashboard. If the email is new, the account is created automatically. If it already exists, we load the saved account data.";
+  if (
+    /(login|connexion|password|email|e-mail|account|compte|register|inscription|cadastro|senha)/.test(
+      text,
+    )
+  ) {
+    return "Utilisez votre nom complet et votre e-mail pour accéder au tableau de bord. Si l’e-mail est nouveau, le compte est créé automatiquement. S’il existe déjà, nous chargeons les données enregistrées du compte.";
   }
 
-  if (/(safe|secure|security|fraud|trust|seguro|confianca)/.test(text)) {
-    return "Task Partners uses account verification, daily limits, and payout thresholds to reduce automated activity and protect approved auditor balances.";
+  if (/(safe|secure|security|sécurité|fraud|fraude|trust|seguro|confianca)/.test(text)) {
+    return "Task Partners utilise la vérification du compte, les limites quotidiennes et les seuils de paiement pour réduire l’activité automatisée et protéger les soldes approuvés des auditeurs.";
   }
 
-  if (/(charge|dispute|billing|paid|access|order|purchase|refund me|cancel)/.test(text)) {
-    return "Your access is active in this app. Before opening a billing dispute, send us the issue here so support can verify access, refund status, or payout details and help resolve it quickly.";
+  if (
+    /(charge|dispute|billing|facturation|paid|payé|access|accès|order|commande|purchase|achat|refund me|rembourser|cancel|annuler)/.test(
+      text,
+    )
+  ) {
+    return "Votre accès est actif dans cette application. Avant d’ouvrir un litige de facturation, envoyez-nous le problème ici afin que le support puisse vérifier l’accès, le statut du remboursement ou les informations de paiement et vous aider rapidement.";
   }
 
-  return "I can help with withdrawals, refunds, daily audit limits, payout methods, login, account security, and creator review requirements. Could you tell me which one you need help with?";
+  return "Je peux vous aider avec les retraits, les remboursements, les limites d’audit quotidiennes, les méthodes de paiement, la connexion, la sécurité du compte et les exigences d’avis créateur. Dites-moi sur quel point vous avez besoin d’aide.";
 }
 
-function ProfileScreen({ user, reviews, balance }: { user: User; reviews: Review[]; balance: number }) {
+function ProfileScreen({
+  user,
+  reviews,
+  balance,
+}: {
+  user: User;
+  reviews: Review[];
+  balance: number;
+}) {
   return (
     <div>
       <h1 className="mb-4 text-2xl font-black text-[#0F172A]">Profil</h1>
       <div className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="grid h-16 w-16 place-items-center rounded-full bg-[#F1F5F9] text-[#0F172A]"><UserRound size={31} /></div>
+          <div className="grid h-16 w-16 place-items-center rounded-full bg-[#F1F5F9] text-[#0F172A]">
+            <UserRound size={31} />
+          </div>
           <div className="min-w-0">
             <p className="text-lg font-black">{user.name}</p>
             <p className="truncate text-sm font-bold text-[#475569]">{user.email}</p>
-            <p className="mt-1 text-xs font-black text-[#2563EB]">Total balance: {usd(balance)}</p>
+            <p className="mt-1 text-xs font-black text-[#2563EB]">Solde total : {usd(balance)}</p>
           </div>
         </div>
       </div>
-      <h2 className="mb-3 mt-5 text-lg font-black text-[#0F172A]">Review History</h2>
+      <h2 className="mb-3 mt-5 text-lg font-black text-[#0F172A]">Historique des avis</h2>
       <div className="space-y-2">
-        {(reviews.length ? reviews : [{ date: "Today", title: "No reviews yet", reward: 0, status: "Waiting" }]).map((review, index) => (
-          <div key={`${review.title}-${index}`} className="rounded-[8px] border border-slate-200 bg-white p-3 text-sm shadow-sm">
-            <div className="flex items-center justify-between gap-3 font-black"><span>{review.title}</span><span>{usd(review.reward)}</span></div>
-            <div className="mt-1 flex items-center justify-between text-xs font-bold text-[#475569]"><span>{review.date}</span><span>{review.status}</span></div>
+        {(reviews.length
+          ? reviews
+          : [
+              {
+                date: "Aujourd’hui",
+                title: "Aucun avis pour le moment",
+                reward: 0,
+                status: "En attente",
+              },
+            ]
+        ).map((review, index) => (
+          <div
+            key={`${review.title}-${index}`}
+            className="rounded-[8px] border border-slate-200 bg-white p-3 text-sm shadow-sm"
+          >
+            <div className="flex items-center justify-between gap-3 font-black">
+              <span>{review.title}</span>
+              <span>{usd(review.reward)}</span>
+            </div>
+            <div className="mt-1 flex items-center justify-between text-xs font-bold text-[#475569]">
+              <span>{review.date}</span>
+              <span>{review.status}</span>
+            </div>
           </div>
         ))}
       </div>
@@ -994,11 +1233,36 @@ function BottomNav({ screen, setScreen }: { screen: Screen; setScreen: (screen: 
   return (
     <nav className="shrink-0 border-t border-slate-200 bg-white px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 text-[11px] font-black shadow-[0_-8px_24px_rgba(15,23,42,.08)]">
       <div className="grid grid-cols-5">
-        <NavButton active={screen === "tasks"} icon={<Home size={21} />} label="Tasks" onClick={() => setScreen("tasks")} />
-        <NavButton active={screen === "wallet"} icon={<Wallet size={21} />} label="Wallet" onClick={() => setScreen("wallet")} />
-        <NavButton active={screen === "refund"} icon={<ReceiptText size={21} />} label="Refund" onClick={() => setScreen("refund")} />
-        <NavButton active={screen === "support"} icon={<MessageCircle size={21} />} label="Support" onClick={() => setScreen("support")} />
-        <NavButton active={screen === "profile"} icon={<UserRound size={21} />} label="Profile" onClick={() => setScreen("profile")} />
+        <NavButton
+          active={screen === "tasks"}
+          icon={<Home size={21} />}
+          label="Tâches"
+          onClick={() => setScreen("tasks")}
+        />
+        <NavButton
+          active={screen === "wallet"}
+          icon={<Wallet size={21} />}
+          label="Portefeuille"
+          onClick={() => setScreen("wallet")}
+        />
+        <NavButton
+          active={screen === "refund"}
+          icon={<ReceiptText size={21} />}
+          label="Remboursement"
+          onClick={() => setScreen("refund")}
+        />
+        <NavButton
+          active={screen === "support"}
+          icon={<MessageCircle size={21} />}
+          label="Aide"
+          onClick={() => setScreen("support")}
+        />
+        <NavButton
+          active={screen === "profile"}
+          icon={<UserRound size={21} />}
+          label="Profil"
+          onClick={() => setScreen("profile")}
+        />
       </div>
     </nav>
   );
@@ -1011,20 +1275,36 @@ function ProcessingOverlay({ step }: { step: number }) {
         <div className="mx-auto mb-7 grid h-20 w-20 place-items-center rounded-full bg-[#FE2C55] text-white shadow-xl shadow-rose-200">
           <Loader2 className="animate-spin" size={36} />
         </div>
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-[#2563EB]">Processing review</p>
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-[#2563EB]">
+          Traitement de l’avis
+        </p>
         <h2 className="mt-3 text-2xl font-black">{processingSteps[step]}</h2>
       </div>
     </div>
   );
 }
 
-function ChoiceRow({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+function ChoiceRow({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
   return (
     <div>
       <p className="mb-2 text-sm font-black text-[#0F172A]">{label}</p>
       <div className="grid grid-cols-2 gap-2">
-        {["Yes", "No"].map((option) => (
-          <button key={option} className={`h-11 rounded-[8px] text-sm font-black transition ${value === option ? "bg-[#FE2C55] text-white shadow-lg shadow-rose-100" : "bg-white text-[#475569]"}`} onClick={(event) => preserveScrollFrom(event.currentTarget, () => onChange(option))} onMouseDown={(event) => event.preventDefault()} type="button">
+        {["Oui", "Non"].map((option) => (
+          <button
+            key={option}
+            className={`h-11 rounded-[8px] text-sm font-black transition ${value === option ? "bg-[#FE2C55] text-white shadow-lg shadow-rose-100" : "bg-white text-[#475569]"}`}
+            onClick={(event) => preserveScrollFrom(event.currentTarget, () => onChange(option))}
+            onMouseDown={(event) => event.preventDefault()}
+            type="button"
+          >
             {option}
           </button>
         ))}
@@ -1033,8 +1313,27 @@ function ChoiceRow({ label, value, onChange }: { label: string; value: string; o
   );
 }
 
-function NavButton({ active, icon, label, onClick }: { active: boolean; icon: ReactNode; label: string; onClick: () => void }) {
-  return <button className={`flex h-14 flex-col items-center justify-center gap-1 rounded-[8px] ${active ? "bg-[#F1F5F9] text-[#FE2C55]" : "text-[#475569]"}`} onClick={onClick} type="button">{icon}<span>{label}</span></button>;
+function NavButton({
+  active,
+  icon,
+  label,
+  onClick,
+}: {
+  active: boolean;
+  icon: ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      className={`flex h-14 flex-col items-center justify-center gap-1 rounded-[8px] ${active ? "bg-[#F1F5F9] text-[#FE2C55]" : "text-[#475569]"}`}
+      onClick={onClick}
+      type="button"
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  );
 }
 
 function AuthInput({
@@ -1066,7 +1365,12 @@ function AuthInput({
 }
 
 function MetricCard({ label, value, tone }: { label: string; value: string; tone: string }) {
-  return <div className={`rounded-[8px] border border-slate-200 ${tone} p-4 shadow-sm`}><p className="text-xs font-black uppercase tracking-[0.16em] text-[#475569]">{label}</p><p className="mt-2 text-3xl font-black text-[#0F172A]">{value}</p></div>;
+  return (
+    <div className={`rounded-[8px] border border-slate-200 ${tone} p-4 shadow-sm`}>
+      <p className="text-xs font-black uppercase tracking-[0.16em] text-[#475569]">{label}</p>
+      <p className="mt-2 text-3xl font-black text-[#0F172A]">{value}</p>
+    </div>
+  );
 }
 
 function preserveScrollFrom(element: HTMLElement, action: () => void) {
@@ -1092,7 +1396,11 @@ function findScrollableParent(element: HTMLElement) {
 }
 
 function Brand() {
-  return <div className="flex items-center gap-2 text-lg font-black text-[#0F172A]"><span className="h-5 w-5 rounded-[6px] bg-[#25F4EE] shadow-[7px_0_0_#FE2C55]" /> Task Partners</div>;
+  return (
+    <div className="flex items-center gap-2 text-lg font-black text-[#0F172A]">
+      <span className="h-5 w-5 rounded-[6px] bg-[#25F4EE] shadow-[7px_0_0_#FE2C55]" /> Task Partners
+    </div>
+  );
 }
 
 function UnsupportedDevice() {
@@ -1102,9 +1410,10 @@ function UnsupportedDevice() {
         <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full bg-[#FE2C55] text-white">
           <LockKeyholeIcon size={26} />
         </div>
-        <h1 className="text-2xl font-black">Unsupported Device</h1>
+        <h1 className="text-2xl font-black">Appareil non pris en charge</h1>
         <p className="mt-3 text-sm leading-6 text-[#475569]">
-          This application is available only on mobile devices (iOS/Android). Please open it from your smartphone.
+          Cette application est disponible uniquement sur mobile (iOS/Android). Veuillez l’ouvrir
+          depuis votre smartphone.
         </p>
       </div>
     </main>
@@ -1112,7 +1421,14 @@ function UnsupportedDevice() {
 }
 
 function Server404() {
-  return <main className="grid min-h-dvh place-items-center bg-white text-center text-black"><div><h1 className="text-5xl font-black">404</h1><p className="mt-3 text-lg text-zinc-600">Page introuvable</p></div></main>;
+  return (
+    <main className="grid min-h-dvh place-items-center bg-white text-center text-black">
+      <div>
+        <h1 className="text-5xl font-black">404</h1>
+        <p className="mt-3 text-lg text-zinc-600">Page introuvable</p>
+      </div>
+    </main>
+  );
 }
 
 function usd(value: number) {
@@ -1121,14 +1437,19 @@ function usd(value: number) {
 
 function rewardForTask(index: number): number {
   if (index === TOTAL_TASKS_TO_GOAL - 1) {
-    const previousTotal = rewardCurve.slice(0, TOTAL_TASKS_TO_GOAL - 1).reduce((sum, value) => sum + value, 0);
+    const previousTotal = rewardCurve
+      .slice(0, TOTAL_TASKS_TO_GOAL - 1)
+      .reduce((sum, value) => sum + value, 0);
     return Number((TOTAL_REWARD_TO_GOAL - previousTotal).toFixed(2));
   }
   return Number((rewardCurve[index] ?? 0).toFixed(2));
 }
 
 function countWords(value: string) {
-  return value.trim().split(/\s+/).filter((word) => word.length > 1).length;
+  return value
+    .trim()
+    .split(/\s+/)
+    .filter((word) => word.length > 1).length;
 }
 
 function sendAccessEmail(user: User) {
@@ -1145,7 +1466,9 @@ function handleBehavioralEmailTriggers(user: User, balance: number, reviewedCoun
   const count = syncEvaluatedVideoCount(user.email, reviewedCount);
   const log = readTriggeredEmailsLog(user.email);
   const inFlight = readEmailsInFlight(user.email);
-  const triggers = pendingEmailTriggersForCount(count, log).filter((trigger) => !inFlight.includes(trigger.key));
+  const triggers = pendingEmailTriggersForCount(count, log).filter(
+    (trigger) => !inFlight.includes(trigger.key),
+  );
   if (!triggers.length) return;
 
   writeEmailsInFlight(user.email, [...inFlight, ...triggers.map((trigger) => trigger.key)]);
@@ -1161,26 +1484,35 @@ function handleBehavioralEmailTriggers(user: User, balance: number, reviewedCoun
       }),
       headers: { "Content-Type": "application/json" },
       method: "POST",
-    }).then((response) => {
-      if (!response.ok) {
-        void response.text().then((text) => {
-          console.warn("[Task Partners] behavioral email failed", response.status, text);
-        });
-        return;
-      }
-      const freshLog = readTriggeredEmailsLog(user.email);
-      if (!freshLog.includes(trigger.key)) {
-        writeTriggeredEmailsLog(user.email, [...freshLog, trigger.key]);
-      }
-    }).catch((error) => {
-      console.warn("[Task Partners] behavioral email failed", error);
-    }).finally(() => {
-      writeEmailsInFlight(user.email, readEmailsInFlight(user.email).filter((key) => key !== trigger.key));
-    });
+    })
+      .then((response) => {
+        if (!response.ok) {
+          void response.text().then((text) => {
+            console.warn("[Task Partners] behavioral email failed", response.status, text);
+          });
+          return;
+        }
+        const freshLog = readTriggeredEmailsLog(user.email);
+        if (!freshLog.includes(trigger.key)) {
+          writeTriggeredEmailsLog(user.email, [...freshLog, trigger.key]);
+        }
+      })
+      .catch((error) => {
+        console.warn("[Task Partners] behavioral email failed", error);
+      })
+      .finally(() => {
+        writeEmailsInFlight(
+          user.email,
+          readEmailsInFlight(user.email).filter((key) => key !== trigger.key),
+        );
+      });
   }
 }
 
-function pendingEmailTriggersForCount(count: number, log: string[]): Array<{ count: number; key: string; template: string }> {
+function pendingEmailTriggersForCount(
+  count: number,
+  log: string[],
+): Array<{ count: number; key: string; template: string }> {
   const milestones = [
     { count: 3, key: "email_3", template: "email_3" },
     { count: 6, key: "email_6", template: "email_6" },
@@ -1206,7 +1538,8 @@ function syncEvaluatedVideoCount(email: string, reviewedCount: number) {
 function readTriggeredEmailsLog(email: string): string[] {
   const key = userScopedKey(CONFIRMED_EMAILS_LOG_KEY, email);
   try {
-    const raw = window.localStorage.getItem(key) ?? window.localStorage.getItem(CONFIRMED_EMAILS_LOG_KEY);
+    const raw =
+      window.localStorage.getItem(key) ?? window.localStorage.getItem(CONFIRMED_EMAILS_LOG_KEY);
     const parsed = raw ? JSON.parse(raw) : [];
     return Array.isArray(parsed) ? parsed.filter((item) => typeof item === "string") : [];
   } catch {
@@ -1258,10 +1591,19 @@ function readSession(): User | null {
   }
 }
 
-function readAppState(email: string): { balance: number; reviewedIds: string[]; reviews: Review[]; taskIndex: number } | null {
+function readAppState(
+  email: string,
+): { balance: number; reviewedIds: string[]; reviews: Review[]; taskIndex: number } | null {
   try {
     const raw = window.localStorage.getItem(appStateKey(email));
-    return raw ? (JSON.parse(raw) as { balance: number; reviewedIds: string[]; reviews: Review[]; taskIndex: number }) : null;
+    return raw
+      ? (JSON.parse(raw) as {
+          balance: number;
+          reviewedIds: string[];
+          reviews: Review[];
+          taskIndex: number;
+        })
+      : null;
   } catch {
     return null;
   }
