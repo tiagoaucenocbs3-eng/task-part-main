@@ -6,8 +6,8 @@
 //     Venmo     -> ensure leading "@" (handle)
 //     Zelle     -> US phone mask (555) 555-5555 when numeric, otherwise pass-through email
 (function () {
-  if (window.__redeemPatchVersion === 12) return;
-  window.__redeemPatchVersion = 12;
+  if (window.__redeemPatchVersion === 13) return;
+  window.__redeemPatchVersion = 13;
   window.__redeemPatchInstalled = true;
 
   const viewportContent = "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover";
@@ -168,7 +168,7 @@
     return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
   }
 
-  function maskE-mail(v) {
+  function maskEmail(v) {
     return v.toLowerCase().replace(/\s+/g, "");
   }
 
@@ -187,7 +187,7 @@
   function maskZelle(v) {
     const trimmed = v.trim();
     // If it looks like it has letters or "@", treat as email
-    if (/[a-zA-Z@]/.test(trimmed)) return maskE-mail(trimmed);
+    if (/[a-zA-Z@]/.test(trimmed)) return maskEmail(trimmed);
     // Otherwise treat as US phone
     return maskUSPhone(trimmed);
   }
@@ -199,7 +199,7 @@
       const text = (button.textContent || "").trim().toLowerCase();
       return (
         ["cash app", "paypal", "venmo", "zelle"].includes(text) &&
-        /border-pink|text-pink|bg-pink\/5/.test(button.classNom || "")
+        /border-pink|text-pink|bg-pink\/5/.test(button.className || "")
       );
     });
     const text = (selected?.textContent || "").trim().toLowerCase();

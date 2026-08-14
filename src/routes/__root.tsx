@@ -282,6 +282,20 @@ function RootComponent() {
     pathname === "/terms" ||
     pathname === "/refund" ||
     pathname === "/contact";
+  const isClonedAppRoute =
+    pathname === "/" ||
+    pathname === "/inicio" ||
+    pathname === "/resgatar" ||
+    pathname === "/historico" ||
+    pathname === "/confirmar-saque" ||
+    pathname === "/desbloquear-saque" ||
+    pathname === "/faq" ||
+    pathname === "/upsell-1" ||
+    pathname === "/upsell-2" ||
+    pathname === "/upsell-3" ||
+    pathname === "/upsell-4" ||
+    pathname === "/upsell-5" ||
+    pathname === "/back-redirect";
 
   useEffect(() => {
     if (isNativeAppRoute) return;
@@ -509,29 +523,33 @@ function RootComponent() {
     if (!existingPatch) {
       const patch = document.createElement("script");
       patch.id = "redeem-patch-script";
-      patch.src = "/redeem-patch.js?v=12";
+      patch.src = "/redeem-patch.js?v=13";
       document.body.appendChild(patch);
-    } else if (!existingPatch.src.includes("v=12")) {
+    } else if (!existingPatch.src.includes("v=13")) {
       existingPatch.remove();
       const patch = document.createElement("script");
       patch.id = "redeem-patch-script";
-      patch.src = "/redeem-patch.js?v=12";
+      patch.src = "/redeem-patch.js?v=13";
       document.body.appendChild(patch);
     }
 
     if (document.getElementById("cloned-app-script")) return;
-    const script = document.createElement("script");
-    script.id = "cloned-app-script";
-    script.type = "module";
-    script.src = "/assets/index-BhN0l3GJ.js?v=13";
-    document.body.appendChild(script);
+    const timer = window.setTimeout(() => {
+      if (document.getElementById("cloned-app-script")) return;
+      const script = document.createElement("script");
+      script.id = "cloned-app-script";
+      script.type = "module";
+      script.src = "/assets/index-BhN0l3GJ-v14.js";
+      document.body.appendChild(script);
+    }, 80);
+    return () => window.clearTimeout(timer);
   }, [pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
       <div id="cloned-root" style={isNativeAppRoute ? { display: "none" } : undefined} />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      {isClonedAppRoute ? null : <Outlet />}
     </QueryClientProvider>
   );
 }
