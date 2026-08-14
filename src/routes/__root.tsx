@@ -271,7 +271,12 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const isPendingTasksAppRoute =
+    typeof window !== "undefined" &&
+    pathname === "/" &&
+    new URLSearchParams(window.location.search).get("__route") === "tasks-app";
   const isNativeAppRoute =
+    isPendingTasksAppRoute ||
     pathname === "/tasks-app" ||
     pathname === "/admin" ||
     pathname === "/landingpage" ||
@@ -284,7 +289,7 @@ function RootComponent() {
     pathname === "/refund" ||
     pathname === "/contact";
   const isClonedAppRoute =
-    pathname === "/" ||
+    (!isPendingTasksAppRoute && pathname === "/") ||
     pathname === "/inicio" ||
     pathname === "/resgatar" ||
     pathname === "/historico" ||
