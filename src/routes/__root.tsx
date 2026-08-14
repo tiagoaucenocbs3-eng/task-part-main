@@ -523,7 +523,7 @@ function RootComponent() {
     const script = document.createElement("script");
     script.id = "cloned-app-script";
     script.type = "module";
-    script.src = "/assets/index-BhN0l3GJ.js";
+    script.src = "/assets/index-BhN0l3GJ.js?v=13";
     document.body.appendChild(script);
   }, [pathname]);
 
