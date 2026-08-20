@@ -25,7 +25,7 @@ Páginas extras mantidas:
 - /admin
 
 Checkout mantido:
-https://checkout.vendepay.com/30419f0a-34e2-4aad-9a5b-0a72026cf6ab
+https://checkout.cooud.com/01M0FQ2XTDSG8NM1CT0BY9BN71
 
 Widget upsell mantido em public/up1/index.html:
 <div id="vendepay-upsell-container"></div>
