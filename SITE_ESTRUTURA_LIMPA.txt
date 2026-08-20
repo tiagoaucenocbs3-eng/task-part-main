@@ -13,7 +13,7 @@ Fluxo principal:
 7. /back-redirect     retenção/botão voltar
 8. /up1               upsell pós-compra com widget Vendepay
 9. /thanks            obrigado/confirmação
-10. Entrega externa: https://www.taskpartners.online/tasks-app
+10. Entrega externa: https://task-part-main.vercel.app/tasks-app
 
 Páginas extras mantidas:
 - /landingpage

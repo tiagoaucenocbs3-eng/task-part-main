@@ -6,7 +6,7 @@ C:\Users\tiago\Downloads\site\task-part-main_frances_sem_pixels
 Criado a partir da versão limpa sem pixels.
 
 Fluxo mantido:
-/ -> /inicio -> /resgatar -> /confirmar-saque -> /up1 -> /thanks -> https://www.taskpartners.online/tasks-app
+/ -> /inicio -> /resgatar -> /confirmar-saque -> /up1 -> /thanks -> https://task-part-main.vercel.app/tasks-app
 
 Páginas traduzidas/mantidas:
 - /inicio
