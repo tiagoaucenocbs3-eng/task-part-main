@@ -268,14 +268,36 @@ if (document.readyState === "loading") {
       <p id="completionText" class="completion-text"></p>
     </section>
 
-    <!-- Conteneur où l’upsell sera affiché -->
-<div id="vendepay-upsell-container"></div>
-
-<!-- Script du widget Vendepay Upsell -->
-<script src="https://widget.vendepay.com/upsell-widget/v1/vendepay-upsell-widget-1.0.16.js?upsellId=760198bb-9c35-40e6-82b7-5a0d22979eaf"
-        onload="window.VendepayUpsellWidget && window.VendepayUpsellWidget.showIframe('vendepay-upsell-container')">
-</script>
+    <section id="confirmSection" class="confirm-section hidden fade-in" style="margin-top: 1.5rem;">
+      <p id="confirmText" class="confirm-text"></p>
+      
+      <!-- Conteneur Cooud Flow -->
+      <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:480px;margin:0 auto;font-family:inherit;" data-cooud-flow-root>
+        <script type="application/json">{"steps":[{"title":"Guide de réinitialisation mentale","priceText":"67,00 €","primary":{"id":"01M0FQRWSF6NMSG7BNRA0Y807C","redirect":"https://task-part-main.vercel.app/up1","label":"Activer la mise à jour","style":"display: flex; align-items: center; justify-content: center; text-decoration: none; font-family: inherit; font-weight: 600; padding: 16px 24px; font-size: 17px; border-radius: 8px; background-color: #059669; color: #ffffff; border: none; width: 100%; cursor: pointer;"},"fallback":null,"dismiss":{"primary":{"label":"n","style":"display: flex; align-items: center; justify-content: center; text-decoration: none; font-family: inherit; font-weight: 400; padding: 8px 16px; font-size: 14px; border-radius: 8px; background-color: transparent; color: #6b7280; border: none; width: 100%; cursor: pointer;"},"fallback":{"label":"n","style":"display: flex; align-items: center; justify-content: center; text-decoration: none; font-family: inherit; font-weight: 400; padding: 8px 16px; font-size: 14px; border-radius: 8px; background-color: transparent; color: #6b7280; border: none; width: 100%; cursor: pointer;"}}}],"initialStep":0,"startInFallback":false,"routingMode":"legacy","processingText":"Processando...","noMoreOffersText":"Obrigado! Sem mais ofertas.","connectScriptUrl":"https://orbit.cooud.com/scripts/connect"}</script>
+        <button
+          type="button"
+          data-cooud-flow-primary
+          data-connect-action="take"
+          data-connect-id="01M0FQRWSF6NMSG7BNRA0Y807C"
+          data-connect-redirect="https://task-part-main.vercel.app/up1"
+          style="display: flex; align-items: center; justify-content: center; text-decoration: none; font-family: inherit; font-weight: 600; padding: 16px 24px; font-size: 17px; border-radius: 8px; background-color: #059669; color: #ffffff; border: none; width: 100%; cursor: pointer;"
+        >
+          Activer la mise à jour
+        </button>
+        <button
+          type="button"
+          data-cooud-flow-dismiss
+          data-connect-action="dismiss"
+          style="display: none;"
+        >
+          n
+        </button>
+      </div>
     </section>
+
+    <!-- Scripts Cooud -->
+    <script src="https://js.stripe.com/v3/" async defer></script>
+    <script src="https://orbit.cooud.com/scripts/flow" async defer></script>
   </div>
 </main>
 
