@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, DollarSign, Home, ShieldCheck, TrendingUp, Users, Wrench } from "lucide-react";
 import type { ReactNode } from "react";
 
-const CHECKOUT_URL = "https://checkout.vendepay.com/ed9352bf-036c-430c-8000-1601f86a9dc5";
+const CHECKOUT_URL = "https://checkout.cooud.com/01M0FQ2XTDSG8NM1CT0BY9BN71";
 
 const problems = [
   "Vous voulez un revenu complémentaire, mais vous ne savez pas par quelle compétence commencer",

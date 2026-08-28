@@ -31,7 +31,7 @@ Entregável traduzido:
 - public/tasks-app/index.html
 
 Checkout mantido:
-https://checkout.vendepay.com/ed9352bf-036c-430c-8000-1601f86a9dc5
+https://checkout.cooud.com/01M0FQ2XTDSG8NM1CT0BY9BN71
 
 Widget upsell Vendepay mantido em public/up1/index.html.
 
